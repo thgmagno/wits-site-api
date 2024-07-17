@@ -1,5 +1,5 @@
-import { Activity } from 'src/modules/activity/entity/activity.entity';
-import { Course } from 'src/modules/course/entity/course.entity';
+import { Activity } from '../../../modules/activity/entity/activity.entity';
+import { Course } from '../../../modules/course/entity/course.entity';
 import {
   Column,
   CreateDateColumn,

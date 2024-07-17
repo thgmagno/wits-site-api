@@ -1,5 +1,5 @@
-import { Activity } from "src/modules/activity/entity/activity.entity";
-import { User } from "src/modules/user/entity/user.entity";
+import { Activity } from "../../../modules/activity/entity/activity.entity";
+import { User } from "../../../modules/user/entity/user.entity";
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity()

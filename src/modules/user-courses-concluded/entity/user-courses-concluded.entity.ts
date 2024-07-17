@@ -1,5 +1,5 @@
-import { Course } from "src/modules/course/entity/course.entity";
-import { User } from "src/modules/user/entity/user.entity";
+import { Course } from "../../../modules/course/entity/course.entity";
+import { User } from "../../../modules/user/entity/user.entity";
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 
 @Entity()

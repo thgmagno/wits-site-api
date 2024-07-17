@@ -9,6 +9,7 @@ import { Activity } from '../activity/entity/activity.entity';
 import { Course } from '../course/entity/course.entity';
 import { UserCourseConcluded } from '../user-courses-concluded/entity/user-courses-concluded.entity';
 import { UserActivityAnswered } from '../user-activities-answered/entity/user-activities-answered.entity';
+import { UserScore } from '../user-score/entity/user-score.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { UserActivityAnswered } from '../user-activities-answered/entity/user-ac
       Activity,
       Course,
       UserCourseConcluded,
-      UserActivityAnswered
+      UserActivityAnswered,
+      UserScore
     ]),
   ],
   providers: [UserService, JwtProvider, HashProvider],
