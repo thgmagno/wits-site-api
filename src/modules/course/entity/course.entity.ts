@@ -1,13 +1,16 @@
+import { User } from 'src/modules/user/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 class Courses {
+@ManyToMany(() => User, (user) => user.id_user)
   @PrimaryGeneratedColumn()
   id_course: number;
 

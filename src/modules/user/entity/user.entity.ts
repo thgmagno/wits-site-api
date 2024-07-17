@@ -1,7 +1,9 @@
+import { Course } from 'src/modules/course/entity/course.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +15,7 @@ export enum Role {
 
 @Entity()
 class Users {
+    @ManyToMany(() => Course, (course) => course.id_course)
   @PrimaryGeneratedColumn()
   id_user: number;
 
