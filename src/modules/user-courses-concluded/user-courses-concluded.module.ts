@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserCoursesConcludedDtoService } from './services/user-courses-concluded.dto.service';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../../database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/entity/user.entity';
 import { Course } from '../course/entity/course.entity';

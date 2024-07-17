@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ActivityService } from './services/activity.service';
 import { ActivityController } from './controller/activity.controller';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../../database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from '../course/entity/course.entity';
 import { User } from '../user/entity/user.entity';

@@ -1,7 +1,7 @@
-import { UserScoreEntity } from './user-score.entity';
+import { UserScore } from './user-score.entity';
 
 describe('UserScoreEntity', () => {
   it('should be defined', () => {
-    expect(new UserScoreEntity()).toBeDefined();
+    expect(new UserScore()).toBeDefined();
   });
 });

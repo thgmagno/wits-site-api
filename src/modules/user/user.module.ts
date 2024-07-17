@@ -3,7 +3,7 @@ import { UserService } from './services/user.service';
 import { JwtProvider } from './providers/jwt.provider';
 import { HashProvider } from './providers/hash.provider';
 import { UserController } from './controller/user.controller';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../../database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Activity } from '../activity/entity/activity.entity';
 import { Course } from '../course/entity/course.entity';

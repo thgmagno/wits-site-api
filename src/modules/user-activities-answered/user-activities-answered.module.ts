@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { UserActivitiesAnsweredService } from './services/user-activities-answered.service';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from '../../database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/entity/user.entity';
 import { Activity } from '../activity/entity/activity.entity';
