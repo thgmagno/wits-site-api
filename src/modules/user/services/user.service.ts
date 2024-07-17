@@ -11,6 +11,7 @@ import { nameValidate } from '../../../shared/utils/name.validator';
 import { LoginUserBodyDTO, LoginUserResponseDTO } from '../domain/requests/LoginUser.request.dto';
 import { UserNotFoundException } from '../domain/errors/UserNotFound.exception';
 import { InvalidCredentialsException } from '../domain/errors/InvalidCredentials.exception';
+import { CommonException } from '../../../shared/domain/errors/Common.exception';
 
 @Injectable()
 export class UserService {
@@ -91,5 +92,19 @@ export class UserService {
                 token: token,
             }
         }
+    }
+}
+
+export class UserClearingService {
+    constructor(
+      private userRepository: UserRepository
+    ) {}
+  
+    public async wipe(): Promise<void> {
+      try {
+        await this.userRepository.clear();
+      } catch (error) {
+        throw new CommonException(error);
+      }
     }
 }
