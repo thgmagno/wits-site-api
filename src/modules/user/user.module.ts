@@ -10,6 +10,7 @@ import { Course } from '../course/entity/course.entity';
 import { UserCourseConcluded } from '../user-courses-concluded/entity/user-courses-concluded.entity';
 import { UserActivityAnswered } from '../user-activities-answered/entity/user-activities-answered.entity';
 import { UserScore } from '../user-score/entity/user-score.entity';
+import { UserRepository } from './repository/user.repository';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { UserScore } from '../user-score/entity/user-score.entity';
       UserScore
     ]),
   ],
-  providers: [UserService, UserClearingService, JWTProvider, HashProvider],
+  providers: [UserService, UserClearingService, UserRepository, JWTProvider, HashProvider],
   controllers: [UserController],
 })
 export class UserModule implements NestModule {
