@@ -8,6 +8,9 @@ import { passwordValidate } from '../../../shared/utils/password.validator';
 import { JWTProvider } from '../providers/jwt.provider';
 import { HashProvider } from '../providers/hash.provider';
 import { nameValidate } from '../../../shared/utils/name.validator';
+import { LoginUserBodyDTO, LoginUserResponseDTO } from '../domain/requests/LoginUser.request.dto';
+import { UserNotFoundException } from '../domain/errors/UserNotFound.exception';
+import { InvalidCredentialsException } from '../domain/errors/InvalidCredentials.exception';
 
 @Injectable()
 export class UserService {
@@ -52,5 +55,41 @@ export class UserService {
           };
     
           return response;
+    }
+
+    async login(loginDto: LoginUserBodyDTO): Promise<LoginUserResponseDTO | UserNotFoundException | InvalidCredentialsException>  {
+        const user = await this.userRepository.findOne({
+            where: { username: loginDto.username },
+        });
+
+        if (!user) {
+            return new UserNotFoundException();
+        }
+
+        const isPasswordValid: boolean = await this.hashProvider.compare(
+            loginDto.inserted_password,
+            user.password,
+        );
+
+        if (!isPasswordValid) {
+            return new InvalidCredentialsException();
+        }   else    {
+            const token = this.jwtProvider.generate({
+                payload: {
+                  id: user.id_user,
+                  role: user.role,
+                },
+                expiresIn: '30d',
+              });
+
+            return {
+                user: {
+                    id: user.id_user,
+                    name: user.username,
+                    role: user.role,
+                },
+                token: token,
+            }
+        }
     }
 }
