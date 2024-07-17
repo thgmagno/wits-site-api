@@ -12,6 +12,7 @@ import { LoginUserBodyDTO, LoginUserResponseDTO } from '../domain/requests/Login
 import { UserNotFoundException } from '../domain/errors/UserNotFound.exception';
 import { InvalidCredentialsException } from '../domain/errors/InvalidCredentials.exception';
 import { CommonException } from '../../../shared/domain/errors/Common.exception';
+import { UsernameAlreadyRegisteredException } from '../domain/errors/UsernameAlreadyRegistered.exception';
 
 @Injectable()
 export class UserService {
@@ -22,20 +23,26 @@ export class UserService {
     )   {}
 
     async register(credentials: CreateUserRequestDTO): Promise<CreateUserResponseDTO | EmailAlreadyRegisteredException | UnprocessableDataException>    {
-        const userWithSameEmail = this.userRepository.findOne({ where: { email: credentials.email } })
+        if (!nameValidate(credentials.username)) throw new UnprocessableDataException('Nome inválido.');
 
-        if (userWithSameEmail) return new EmailAlreadyRegisteredException();
+        if (!emailValidate(credentials.email)) throw new UnprocessableDataException('Email inválido.');
 
-        if (!nameValidate(credentials.username)) return new UnprocessableDataException('Nome inválido.');
+        if (!passwordValidate(credentials.password)) throw new UnprocessableDataException('Senha inválida.');
 
-        if (!emailValidate(credentials.email)) return new UnprocessableDataException('Email inválido.');
+        const userWithSameEmail = await this.userRepository.findOne({ where: { email: credentials.email } })
 
-        if (!passwordValidate(credentials.password)) return new UnprocessableDataException('Senha inválida.');
+        if (userWithSameEmail) throw new EmailAlreadyRegisteredException();
 
-        const user = await this.userRepository.create({
+        const userWithSameUsername = await this.userRepository.findOne({ where: { username: credentials.username } })
+
+        if (userWithSameUsername) throw new UsernameAlreadyRegisteredException();
+
+        const password = await this.hashProvider.hash(credentials.password);
+
+        const user = await this.userRepository.save({
             username: credentials.username,
             email: credentials.email,
-            password: await this.hashProvider.hash(credentials.password),
+            password: password,
             role: 'common'
         })
 
@@ -63,9 +70,8 @@ export class UserService {
             where: { username: loginDto.username },
         });
 
-        if (!user) {
-            return new UserNotFoundException();
-        }
+        if (!user) 
+          throw new UserNotFoundException();
 
         const isPasswordValid: boolean = await this.hashProvider.compare(
             loginDto.inserted_password,
