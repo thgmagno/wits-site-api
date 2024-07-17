@@ -4,6 +4,6 @@ import { UserScoreController } from './controller/user-score.controller';
 
 @Module({
   providers: [UserScoreService],
-  controllers: [UserScoreController]
+  controllers: [UserScoreController],
 })
 export class UserScoreModule {}

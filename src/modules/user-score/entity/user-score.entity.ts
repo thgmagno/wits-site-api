@@ -1,26 +1,33 @@
-import { User } from "src/modules/user/entity/user.entity";
-import { Column, CreateDateColumn, Entity, OneToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { User } from 'src/modules/user/entity/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity()
-class UserScores    {
-    @PrimaryColumn()
-    @OneToOne(() => User, (user) => user.id_user, {
-      nullable: false,
-    })
-    user_id: number;
+class UserScores {
+  @PrimaryColumn()
+  @OneToOne(() => User, (user) => user.id_user, {
+    nullable: false,
+  })
+  user_id: number;
 
-    @Column()
-    total_score: number;
+  @Column()
+  total_score: number;
 
-    @CreateDateColumn({
-        nullable: false,
-      })
-      created_at: Date;
-    
-      @UpdateDateColumn({
-        nullable: false,
-      })
-      updated_at: Date;
+  @CreateDateColumn({
+    nullable: false,
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    nullable: false,
+  })
+  updated_at: Date;
 }
 
 export { UserScores as UserScore };

@@ -18,7 +18,7 @@ async function bootstrap() {
 
   const PORT = process.env.API_PORT;
 
-  if(process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     patchNestJsSwagger();
   }
 
