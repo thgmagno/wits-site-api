@@ -25,7 +25,7 @@ export class UserService {
     async register(credentials: CreateUserRequestDTO): Promise<CreateUserResponseDTO | EmailAlreadyRegisteredException | UnprocessableDataException>    {
         if (!nameValidate(credentials.username)) throw new UnprocessableDataException('Nome inválido.');
 
-        if (!emailValidate(credentials.email)) throw new UnprocessableDataException('Email inválido.');
+        if (!emailValidate(credentials.email) || credentials.email.length < 10 || credentials.email.length > 50) throw new UnprocessableDataException('Email inválido.');
 
         if (!passwordValidate(credentials.password)) throw new UnprocessableDataException('Senha inválida.');
 
@@ -35,7 +35,7 @@ export class UserService {
 
         const userWithSameUsername = await this.userRepository.findOne({ where: { username: credentials.username } })
 
-        if (userWithSameUsername) throw new UsernameAlreadyRegisteredException();
+        if (userWithSameUsername) throw new UsernameAlreadyRegisteredException()
 
         const password = await this.hashProvider.hash(credentials.password);
 
@@ -66,6 +66,8 @@ export class UserService {
     }
 
     async login(loginDto: LoginUserBodyDTO): Promise<LoginUserResponseDTO | UserNotFoundException | InvalidCredentialsException>  {
+        if (!loginDto.username) throw new UnprocessableDataException('Nome de usuário inválido.');
+
         const user = await this.userRepository.findOne({
             where: { username: loginDto.username },
         });
@@ -79,7 +81,7 @@ export class UserService {
         );
 
         if (!isPasswordValid) {
-            return new InvalidCredentialsException();
+            throw new InvalidCredentialsException();
         }   else    {
             const token = this.jwtProvider.generate({
                 payload: {

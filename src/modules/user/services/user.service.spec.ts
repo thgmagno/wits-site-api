@@ -11,6 +11,7 @@ import { HashProvider } from '../providers/hash.provider';
 import { JWTProvider } from '../providers/jwt.provider';
 import { CreateUserDTO } from '../dto/user.dto';
 import { UnprocessableDataException } from '../../../shared/domain/errors/UnprocessableData.exception';
+import { UserRepository } from '../repository/user.repository';
 
 describe('UserService Test Suites', () => {
   let userService: UserService;
@@ -32,6 +33,7 @@ describe('UserService Test Suites', () => {
         UserService,
         JWTProvider,
         HashProvider,
+        UserRepository,
         UserClearingService,
       ],
       exports: [
@@ -59,7 +61,7 @@ describe('UserService Test Suites', () => {
     }).rejects.toThrow(UnprocessableDataException);
   });
 
-  it('should not create an user with an e-mail with less than 8 characters', async () => {
+  it('should not create an user with an e-mail with less than 10 characters', async () => {
     const user: CreateUserDTO = {
       email: 'a@oi.com',
       password: '@TestandoAlguma_Coisa_123456',
@@ -190,4 +192,16 @@ describe('UserService Test Suites', () => {
       await userService.register(user);
     }).rejects.toThrow(UnprocessableDataException);
   });
+
+  it('should not create an user with an username with less than 5 characters', async () => {
+    const user: CreateUserDTO = {
+      email: 'fulaninhodasilva@gmail.com',
+      password: '1131313@@@TESTEEEE',
+      username: 'f',
+    };
+
+    expect(async () => {
+      await userService.register(user);
+    }).rejects.toThrow(UnprocessableDataException);
+  })
 });
