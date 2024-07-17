@@ -1,3 +1,4 @@
+import { Activity } from 'src/modules/activity/entity/activity.entity';
 import { Course } from 'src/modules/course/entity/course.entity';
 import {
   Column,
@@ -16,6 +17,7 @@ export enum Role {
 @Entity()
 class Users {
     @ManyToMany(() => Course, (course) => course.id_course)
+    @ManyToMany(() => Activity, (activity) => activity.id_activity)
   @PrimaryGeneratedColumn()
   id_user: number;
 

@@ -1,9 +1,11 @@
 import { Course } from 'src/modules/course/entity/course.entity';
+import { User } from 'src/modules/user/entity/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +13,7 @@ import {
 
 @Entity()
 class Activities {
+  @ManyToMany(() => User, (user) => user.id_user)
   @PrimaryGeneratedColumn()
   id_activity: number;
 
