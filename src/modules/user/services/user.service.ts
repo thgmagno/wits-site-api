@@ -13,11 +13,14 @@ import { UserNotFoundException } from '../domain/errors/UserNotFound.exception';
 import { InvalidCredentialsException } from '../domain/errors/InvalidCredentials.exception';
 import { CommonException } from '../../../shared/domain/errors/Common.exception';
 import { UsernameAlreadyRegisteredException } from '../domain/errors/UsernameAlreadyRegistered.exception';
+import { UserScoreRepository } from '../../user-score/repository/user-score-repository';
+import { HomeDataResponseDTO } from '../domain/requests/HomeData.request.dto';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
+        private readonly userScoreRepository: UserScoreRepository,
         private jwtProvider: JWTProvider,
         private hashProvider: HashProvider,
     )   {}
@@ -45,6 +48,7 @@ export class UserService {
             password: password,
             role: 'common'
         })
+        
 
         const token = this.jwtProvider.generate({
             payload: {
@@ -61,6 +65,11 @@ export class UserService {
             },
             token: token,
           };
+
+          await this.userScoreRepository.save({
+            user_id: user.id_user,
+            score: 0,
+          })
     
           return response;
     }
