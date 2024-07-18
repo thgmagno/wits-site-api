@@ -7,7 +7,7 @@ import { emailValidate } from '../../../shared/utils/email.validator';
 import { passwordValidate } from '../../../shared/utils/password.validator';
 import { JWTProvider } from '../providers/jwt.provider';
 import { HashProvider } from '../providers/hash.provider';
-import { nameValidate } from '../../../shared/utils/name.validator';
+import { nameValidate } from '../../../shared/utils/username.validator';
 import { LoginUserBodyDTO, LoginUserResponseDTO } from '../domain/requests/LoginUser.request.dto';
 import { UserNotFoundException } from '../domain/errors/UserNotFound.exception';
 import { InvalidCredentialsException } from '../domain/errors/InvalidCredentials.exception';
@@ -48,14 +48,18 @@ export class UserService {
             password: password,
             role: 'common'
         })
-        
+
+        await this.userScoreRepository.save({
+            user_id: user.id_user,
+            total_score: 0,
+        })
 
         const token = this.jwtProvider.generate({
             payload: {
               id: user.id_user,
               role: 'common',
             },
-          });
+          })
 
           const response = {
             user: {
@@ -66,10 +70,6 @@ export class UserService {
             token: token,
           };
 
-          await this.userScoreRepository.save({
-            user_id: user.id_user,
-            score: 0,
-          })
     
           return response;
     }
@@ -108,6 +108,24 @@ export class UserService {
                 },
                 token: token,
             }
+        }
+    }
+
+    async homeData(user_id: number): Promise<HomeDataResponseDTO | UserNotFoundException> {
+        const user = await this.userRepository.findOne({
+            where: { id_user: user_id },
+        });
+
+        if (!user) throw new UserNotFoundException();
+
+        const userScore = await this.userScoreRepository.findOne({
+            where: { user_id: user_id },
+        });
+
+        return {
+          user: {
+            
+          }
         }
     }
 }
