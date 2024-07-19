@@ -9,7 +9,9 @@ describe('CourseController', () => {
       controllers: [ConjunctCoursesController],
     }).compile();
 
-    controller = module.get<ConjunctCoursesController>(ConjunctCoursesController);
+    controller = module.get<ConjunctCoursesController>(
+      ConjunctCoursesController,
+    );
   });
 
   it('should be defined', () => {

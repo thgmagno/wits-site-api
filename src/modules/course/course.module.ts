@@ -1,5 +1,13 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { ConjunctCoursesController, IndividualCoursesController } from './controller/course.controller';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
+import {
+  ConjunctCoursesController,
+  IndividualCoursesController,
+} from './controller/course.controller';
 import { CourseService } from './services/course.service';
 import { DatabaseModule } from '../../database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,21 +23,30 @@ import { JWTProvider } from '../user/providers/jwt.provider';
 @Module({
   imports: [
     DatabaseModule,
-    TypeOrmModule.forFeature([
-      Activity,
-      UserCourseConcluded,
-      User
-    ]),
+    TypeOrmModule.forFeature([Activity, UserCourseConcluded, User]),
   ],
   controllers: [ConjunctCoursesController, IndividualCoursesController],
-  providers: [CourseService, CourseRepository, UserCourseConcludedRepository, ActivityRepository, JWTProvider],
+  providers: [
+    CourseService,
+    CourseRepository,
+    UserCourseConcludedRepository,
+    ActivityRepository,
+    JWTProvider,
+  ],
 })
 export class CourseModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
       .forRoutes(
-        { path: 'courses/browse', method: RequestMethod.GET },
+        { 
+          path: 'courses/browse', 
+          method: RequestMethod.GET 
+        },
+        {
+          path: 'course/:course_id/info',
+          method: RequestMethod.GET,
+        },
       );
   }
 }
