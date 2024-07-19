@@ -16,8 +16,12 @@ export class CourseService {
     private readonly activitiesRepository: ActivityRepository,
   ) {}
 
-  async getCourses(): Promise<FindCoursesResponseDTO[]> {
-    const courses = await this.courseRepository.find();
+  async getCourses(skip: number): Promise<FindCoursesResponseDTO[]> {
+    const courses = await this.courseRepository.find({
+        order: { created_at: 'DESC' },
+        take: 20,
+        skip
+    });
 
     const coursesWithActivities = await Promise.all(
       courses.map(async (course) => {

@@ -3,6 +3,7 @@ import {
   Get,
   HttpException,
   Param,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -11,14 +12,16 @@ import {
   FindCoursesResponseDTO,
   FindIndividualCourseResponseDTO,
 } from '../domain/requests/FindCourses.request.dto';
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { NotAuthenticatedException } from '../../../shared/domain/errors/NotAuthenticated.exception';
 import { AllExceptionsFilterDTO } from '../../../shared/domain/dtos/errors/AllException.filter.dto';
 import { CommonException } from '../../../shared/domain/errors/Common.exception';
 import { Request, Response } from 'express';
 import { CourseNotFoundException } from '../domain/errors/CourseNotFound.exception';
+import { PaginationDto } from '../../../shared/domain/dtos/providers/Pagination.dto';
 
 @Controller('courses')
+@ApiTags('Cursos')
 export class ConjunctCoursesController {
   constructor(private readonly courseService: CourseService) {}
 
@@ -42,6 +45,7 @@ export class ConjunctCoursesController {
   async browse(
     @Req() req: Request,
     @Res() res: Response,
+    @Query() paginationDto: PaginationDto
   ): Promise<FindCoursesResponseDTO[] | AllExceptionsFilterDTO> {
     const user = req.user;
 
@@ -52,7 +56,9 @@ export class ConjunctCoursesController {
       });
     }
 
-    const result = await this.courseService.getCourses();
+    const { page } = paginationDto;
+    
+    const result = await this.courseService.getCourses((page - 1) * 20);
 
     if (result instanceof HttpException) {
       return res.status(result.getStatus()).json({
@@ -66,6 +72,7 @@ export class ConjunctCoursesController {
 }
 
 @Controller('course')
+@ApiTags('Cursos')
 export class IndividualCoursesController {
   constructor(private readonly courseService: CourseService) {}
 
