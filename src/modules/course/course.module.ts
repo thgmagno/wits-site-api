@@ -47,6 +47,10 @@ export class CourseModule implements NestModule {
         path: 'course/:course_id/info',
         method: RequestMethod.GET,
       },
+      {
+        path: 'course/create',
+        method: RequestMethod.POST,
+      }
     );
   }
 }

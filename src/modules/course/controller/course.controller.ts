@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   Param,
+  Post,
   Query,
   Req,
   Res,
@@ -19,6 +21,8 @@ import { CommonException } from '../../../shared/domain/errors/Common.exception'
 import { Request, Response } from 'express';
 import { CourseNotFoundException } from '../domain/errors/CourseNotFound.exception';
 import { PaginationDto } from '../../../shared/domain/dtos/providers/Pagination.dto';
+import { CreateCourseRequestDTO, CreateCourseResponseDTO } from '../domain/requests/CreateCourse.request.dto';
+import { NoPermisionException } from '../../../shared/domain/errors/NoPermission.exception';
 
 @Controller('courses')
 @ApiTags('Cursos')
@@ -121,6 +125,48 @@ export class IndividualCoursesController {
       });
     } else {
       return res.status(200).json(result);
+    }
+  }
+
+  @Post('/create')
+  @ApiBearerAuth('user-token')
+  @ApiResponse({
+    status: 201,
+    description: 'Curso criado com sucesso.',
+    type: CreateCourseResponseDTO,
+  })
+  @ApiResponse({
+    status: new NoPermisionException().getStatus(),
+    description: new NoPermisionException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
+    status: new CommonException().getStatus(),
+    description: new CommonException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  async createCourse(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() courseData: CreateCourseRequestDTO,
+  ): Promise<CreateCourseResponseDTO | AllExceptionsFilterDTO>  {
+    const user = req.user;
+
+    if (!user || user.role !== 'admin')
+      return res.status(new NoPermisionException().getStatus()).json({
+        message: new NoPermisionException().message,
+        status: new NoPermisionException().getStatus(),
+      });
+
+    const result = await this.courseService.createCourse(courseData);
+
+    if (result instanceof HttpException) {
+      return res.status(result.getStatus()).json({
+        message: result.message,
+        status: result.getStatus(),
+      });
+    } else {
+      return res.status(201).json(result);
     }
   }
 }
