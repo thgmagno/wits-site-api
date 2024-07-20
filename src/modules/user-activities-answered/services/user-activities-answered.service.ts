@@ -8,6 +8,8 @@ import { ActivityNotFoundException } from '../domain/errors/ActivityNotFound.exc
 import { ActivityAlreadyAnsweredException } from '../domain/errors/ActivityAlreadyAnswered.exception';
 import { UserCourseConcludedRepository } from '../../user-courses-concluded/repository/user-courses-concluded.repository';
 import { UserScoreRepository } from '../../user-score/repository/user-score-repository';
+import { UserScoreService } from '../../user-score/services/user-score.service';
+import { CourseRepository } from '../../course/repository/course.repository';
 
 @Injectable()
 export class UserActivitiesAnsweredService {
@@ -16,6 +18,8 @@ export class UserActivitiesAnsweredService {
         private readonly activitiesRepository: ActivityRepository,
         private readonly userRepository: UserRepository,
         private readonly userCourseConcludedRepository: UserCourseConcludedRepository,
+        private readonly courseRepository: CourseRepository,
+        private readonly userScoreService: UserScoreService
     ) {}
 
     async answerQuestion(user_id: number, activity_id: number, answer: string): Promise<true | WrongAnswerException | ActivityAlreadyAnsweredException | UserNotFoundException> {
@@ -71,6 +75,10 @@ export class UserActivitiesAnsweredService {
                 user_id,
                 course_id
             })
+
+            const courseScore = await this.courseRepository.findOne({ where: { id_course: course_id } });
+
+            await this.userScoreService.updateScore(user_id, courseScore.points_worth)
         }
     }
 }
