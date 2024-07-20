@@ -6,6 +6,7 @@ import { UserNotFoundException } from '../../user/domain/errors/UserNotFound.exc
 import { WrongAnswerException } from '../domain/errors/WrongAnswer.exception';
 import { ActivityNotFoundException } from '../domain/errors/ActivityNotFound.exception';
 import { ActivityAlreadyAnsweredException } from '../domain/errors/ActivityAlreadyAnswered.exception';
+import { UserCourseConcludedRepository } from '../../user-courses-concluded/repository/user-courses-concluded.repository';
 
 @Injectable()
 export class UserActivitiesAnsweredService {
@@ -13,6 +14,7 @@ export class UserActivitiesAnsweredService {
         private readonly userActivitiesAnsweredRepository: UserActivityAnsweredRepository,
         private readonly activitiesRepository: ActivityRepository,
         private readonly userRepository: UserRepository,
+        private readonly userCourseConcludedRepository: UserCourseConcludedRepository
     ) {}
 
     async answerQuestion(user_id: number, activity_id: number, answer: string): Promise<true | WrongAnswerException | ActivityAlreadyAnsweredException | UserNotFoundException> {
@@ -42,6 +44,32 @@ export class UserActivitiesAnsweredService {
             activity_id
         });
 
+        await this.verifyCourseConclusion(user_id, activityExists.course_id);
+
         return true
+    }
+
+    async verifyCourseConclusion(user_id: number, course_id: number): Promise<void> {
+        const activities = await this.activitiesRepository.find({ where: { course_id } });
+
+        const answered = []
+
+        for(const activity of activities) {
+            const activityHasAlreadyBeenAnswered = await this.userActivitiesAnsweredRepository.findOne({
+                where: {
+                    activity_id: activity.id_activity,
+                    user_id,
+                }
+            })
+
+            activityHasAlreadyBeenAnswered ? answered.push(true) : answered.push(false)
+        }
+
+        if (!answered.includes(false)) {
+            await this.userCourseConcludedRepository.save({
+                user_id,
+                course_id
+            })
+        }
     }
 }

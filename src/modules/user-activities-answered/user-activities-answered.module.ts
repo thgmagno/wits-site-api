@@ -10,10 +10,11 @@ import { UserRepository } from '../user/repository/user.repository';
 import { UserActivitiesAnsweredController } from './controller/user-activities-answered.controller';
 import { AuthenticationMiddleware } from '../user/middlewares/auth.middleware';
 import { JWTProvider } from '../user/providers/jwt.provider';
+import { UserCourseConcludedRepository } from '../user-courses-concluded/repository/user-courses-concluded.repository';
 
 @Module({
   imports: [DatabaseModule, TypeOrmModule.forFeature([User, Activity])],
-  providers: [UserActivityAnsweredRepository, UserActivitiesAnsweredService, ActivityRepository, UserRepository, JWTProvider],
+  providers: [UserActivityAnsweredRepository, UserActivitiesAnsweredService, ActivityRepository, UserRepository, JWTProvider, UserCourseConcludedRepository],
   controllers: [UserActivitiesAnsweredController],
 })
 export class UserActivitiesAnsweredModule implements NestModule {
