@@ -54,6 +54,10 @@ export class CourseModule implements NestModule {
       {
         path: 'course/edit/:course_id',
         method: RequestMethod.PATCH,
+      },
+      {
+        path: 'course/remove/:course_id',
+        method: RequestMethod.DELETE,
       }
     );
   }

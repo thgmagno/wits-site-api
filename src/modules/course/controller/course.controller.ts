@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Param,
@@ -230,4 +231,50 @@ export class IndividualCoursesController {
       return res.status(201).json(result);
     }
   }
+
+  @Delete('remove/:course_id')
+  @ApiBearerAuth('user-token')
+  @ApiResponse({
+    status: 204,
+    description: 'Curso removido com sucesso.',
+  })
+  @ApiResponse({
+    status: new NoPermisionException().getStatus(),
+    description: new NoPermisionException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
+    status: new CourseNotFoundException().getStatus(),
+    description: new CourseNotFoundException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
+    status: new CommonException().getStatus(),
+    description: new CommonException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  async removeCourse(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('course_id') courseId: number,
+  ): Promise<void | AllExceptionsFilterDTO> {
+    const user = req.user;
+
+    if (!user || user.role !== 'admin')
+      return res.status(new NoPermisionException().getStatus()).json({
+        message: new NoPermisionException().message,
+        status: new NoPermisionException().getStatus(),
+      });
+
+    const result = await this.courseService.removeCourse(courseId);
+
+    if (result instanceof HttpException) {
+      return res.status(result.getStatus()).json({
+        message: result.message,
+        status: result.getStatus(),
+      });
+    } else {
+      return res.status(204).json();
+    }
+  } 
 }

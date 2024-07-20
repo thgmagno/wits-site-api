@@ -126,4 +126,16 @@ export class CourseService {
       created_at: course.created_at,
     };
   }
+
+  async removeCourse(id: number): Promise<void | CourseNotFoundException> {
+    const course = await this.courseRepository.findOne({
+      where: { id_course: id },
+    });
+
+    if(!course) throw new CourseNotFoundException();
+
+    await this.courseRepository.softDelete({ id_course: id });
+
+    await this.activitiesRepository.softDelete({ course_id: id });
+  }
 }
