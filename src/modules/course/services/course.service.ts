@@ -88,7 +88,7 @@ export class CourseService {
   async createCourse(courseData: CreateCourseRequestDTO): Promise<CreateCourseResponseDTO | UnprocessableDataException> {
     if(!nameValidate(courseData.course_name)) throw new UnprocessableDataException('Nome do curso inválido');
 
-    if(!Number.isInteger(courseData.points_worth)) throw new UnprocessableDataException('Total de pontos deve ser um número inteiro');
+    if(!Number.isInteger(courseData.points_worth) || courseData.points_worth <= 0) throw new UnprocessableDataException('Total de pontos deve ser um número inteiro positivo maior que 0.');
 
     const course = await this.courseRepository.save({
       course_name: courseData.course_name,
@@ -106,7 +106,7 @@ export class CourseService {
   async editCourse(id: number, courseData: EditCourseRequestDTO): Promise<EditCourseResponseDTO | CourseNotFoundException | UnprocessableDataException> {
     if(!nameValidate(courseData.course_name)) throw new UnprocessableDataException('Nome do curso inválido');
 
-    if(!Number.isInteger(courseData.points_worth)) throw new UnprocessableDataException('Total de pontos deve ser um número inteiro');
+    if(!Number.isInteger(courseData.points_worth) || courseData.points_worth <= 0) throw new UnprocessableDataException('Total de pontos deve ser um número inteiro positivo maior que 0.');
 
     const course = await this.courseRepository.findOne({
       where: { id_course: id },
