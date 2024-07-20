@@ -73,6 +73,7 @@ export class CourseService {
       points_worth: course.points_worth,
       activities: activities,
       user_concluded_course: userConcluded ? true : false,
+      concluded_at: userConcluded ? userConcluded.created_at : null,
       created_at: course.created_at,
     };
   }
