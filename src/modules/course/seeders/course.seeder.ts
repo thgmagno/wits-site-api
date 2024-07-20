@@ -10,7 +10,7 @@ export default class CourseSeeder implements Seeder {
   ): Promise<any> {
     const repository = dataSource.getRepository(Course);
 
-    const newSkill = repository.create(courses);
-    await repository.save(newSkill);
+    const newCourses = repository.create(courses);
+    await repository.save(newCourses);
   }
 }
