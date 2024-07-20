@@ -50,6 +50,10 @@ export class CourseModule implements NestModule {
       {
         path: 'course/create',
         method: RequestMethod.POST,
+      },
+      {
+        path: 'course/edit/:course_id',
+        method: RequestMethod.PATCH,
       }
     );
   }

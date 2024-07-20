@@ -11,6 +11,7 @@ import { UserActivityAnsweredRepository } from '../../user-activities-answered/r
 import { CreateCourseRequestDTO, CreateCourseResponseDTO } from '../domain/requests/CreateCourse.request.dto';
 import { nameValidate } from '../../../shared/utils/username.validator';
 import { UnprocessableDataException } from '../../../shared/domain/errors/UnprocessableData.exception';
+import { EditCourseRequestDTO, EditCourseResponseDTO } from '../domain/requests/EditCourse.request.dto';
 
 @Injectable()
 export class CourseService {
@@ -93,6 +94,30 @@ export class CourseService {
       course_name: courseData.course_name,
       points_worth: courseData.points_worth,
     });
+
+    return {
+      id_course: course.id_course,
+      course_name: course.course_name,
+      points_worth: course.points_worth,
+      created_at: course.created_at,
+    };
+  }
+
+  async editCourse(id: number, courseData: EditCourseRequestDTO): Promise<EditCourseResponseDTO | CourseNotFoundException | UnprocessableDataException> {
+    if(!nameValidate(courseData.course_name)) throw new UnprocessableDataException('Nome do curso inválido');
+
+    if(!Number.isInteger(courseData.points_worth)) throw new UnprocessableDataException('Total de pontos deve ser um número inteiro');
+
+    const course = await this.courseRepository.findOne({
+      where: { id_course: id },
+    });
+
+    if(!course) throw new CourseNotFoundException();
+
+    course.course_name = courseData.course_name;
+    course.points_worth = courseData.points_worth;
+
+    await this.courseRepository.save(course);
 
     return {
       id_course: course.id_course,

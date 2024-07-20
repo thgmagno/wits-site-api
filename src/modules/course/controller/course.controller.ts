@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -23,6 +24,8 @@ import { CourseNotFoundException } from '../domain/errors/CourseNotFound.excepti
 import { PaginationDto } from '../../../shared/domain/dtos/providers/Pagination.dto';
 import { CreateCourseRequestDTO, CreateCourseResponseDTO } from '../domain/requests/CreateCourse.request.dto';
 import { NoPermisionException } from '../../../shared/domain/errors/NoPermission.exception';
+import { EditCourseRequestDTO, EditCourseResponseDTO } from '../domain/requests/EditCourse.request.dto';
+import { UnprocessableDataException } from '../../../shared/domain/errors/UnprocessableData.exception';
 
 @Controller('courses')
 @ApiTags('Cursos')
@@ -141,6 +144,11 @@ export class IndividualCoursesController {
     type: AllExceptionsFilterDTO,
   })
   @ApiResponse({
+    status: new UnprocessableDataException().getStatus(),
+    description: new UnprocessableDataException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
     status: new CommonException().getStatus(),
     description: new CommonException().message,
     type: AllExceptionsFilterDTO,
@@ -159,6 +167,59 @@ export class IndividualCoursesController {
       });
 
     const result = await this.courseService.createCourse(courseData);
+
+    if (result instanceof HttpException) {
+      return res.status(result.getStatus()).json({
+        message: result.message,
+        status: result.getStatus(),
+      });
+    } else {
+      return res.status(201).json(result);
+    }
+  }
+
+  @Patch('/edit/:course_id')
+  @ApiBearerAuth('user-token')
+  @ApiResponse({
+    status: 201,
+    description: 'Curso editado com sucesso.',
+    type: EditCourseResponseDTO,
+  })
+  @ApiResponse({
+    status: new NoPermisionException().getStatus(),
+    description: new NoPermisionException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
+    status: new CourseNotFoundException().getStatus(),
+    description: new CourseNotFoundException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
+    status: new UnprocessableDataException().getStatus(),
+    description: new UnprocessableDataException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  @ApiResponse({
+    status: new CommonException().getStatus(),
+    description: new CommonException().message,
+    type: AllExceptionsFilterDTO,
+  })
+  async editCourse(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Param('course_id') courseId: number,
+    @Body() courseData: EditCourseRequestDTO,
+  ): Promise <EditCourseResponseDTO | AllExceptionsFilterDTO> {
+    const user = req.user;
+
+    if (!user || user.role !== 'admin')
+      return res.status(new NoPermisionException().getStatus()).json({
+        message: new NoPermisionException().message,
+        status: new NoPermisionException().getStatus(),
+      });
+
+    const result = await this.courseService.editCourse(courseId, courseData);
 
     if (result instanceof HttpException) {
       return res.status(result.getStatus()).json({
