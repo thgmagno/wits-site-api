@@ -117,7 +117,10 @@ export class CourseService {
     course.course_name = courseData.course_name;
     course.points_worth = courseData.points_worth;
 
-    await this.courseRepository.save(course);
+    await this.courseRepository.update({ id_course: id }, {
+      course_name: course.course_name,
+      points_worth: course.points_worth,
+    });
 
     return {
       id_course: course.id_course,
