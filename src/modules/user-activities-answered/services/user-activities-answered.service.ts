@@ -7,6 +7,7 @@ import { WrongAnswerException } from '../domain/errors/WrongAnswer.exception';
 import { ActivityNotFoundException } from '../domain/errors/ActivityNotFound.exception';
 import { ActivityAlreadyAnsweredException } from '../domain/errors/ActivityAlreadyAnswered.exception';
 import { UserCourseConcludedRepository } from '../../user-courses-concluded/repository/user-courses-concluded.repository';
+import { UserScoreRepository } from '../../user-score/repository/user-score-repository';
 
 @Injectable()
 export class UserActivitiesAnsweredService {
@@ -14,7 +15,7 @@ export class UserActivitiesAnsweredService {
         private readonly userActivitiesAnsweredRepository: UserActivityAnsweredRepository,
         private readonly activitiesRepository: ActivityRepository,
         private readonly userRepository: UserRepository,
-        private readonly userCourseConcludedRepository: UserCourseConcludedRepository
+        private readonly userCourseConcludedRepository: UserCourseConcludedRepository,
     ) {}
 
     async answerQuestion(user_id: number, activity_id: number, answer: string): Promise<true | WrongAnswerException | ActivityAlreadyAnsweredException | UserNotFoundException> {
