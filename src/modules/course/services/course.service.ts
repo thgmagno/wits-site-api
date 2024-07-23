@@ -18,6 +18,8 @@ import {
   EditCourseRequestDTO,
   EditCourseResponseDTO,
 } from '../domain/requests/EditCourse.request.dto';
+import { UserRepository } from '../../user/repository/user.repository';
+import { UserNotFoundException } from '../../user/domain/errors/UserNotFound.exception';
 
 @Injectable()
 export class CourseService {
@@ -25,6 +27,7 @@ export class CourseService {
     private readonly courseRepository: CourseRepository,
     private readonly userCourseConcludedRepository: UserCourseConcludedRepository,
     private readonly activitiesRepository: ActivityRepository,
+    private readonly userRepository: UserRepository,
     private readonly userActivityAnsweredRepository: UserActivityAnsweredRepository,
   ) {}
 
@@ -54,7 +57,13 @@ export class CourseService {
   async getCourseData(
     user_id: number,
     course_id: number,
-  ): Promise<FindIndividualCourseResponseDTO | CourseNotFoundException> {
+  ): Promise<FindIndividualCourseResponseDTO | UserNotFoundException | CourseNotFoundException> {
+    const user = await this.userRepository.findOne({
+      where: { id_user: user_id },
+    })
+
+    if (!user) throw new UserNotFoundException();
+
     const course = await this.courseRepository.findOne({
       where: { id_course: course_id },
     });
@@ -93,7 +102,7 @@ export class CourseService {
   async createCourse(
     courseData: CreateCourseRequestDTO,
   ): Promise<CreateCourseResponseDTO | UnprocessableDataException> {
-    if (!nameValidate(courseData.course_name))
+    if (!nameValidate(courseData.course_name) || courseData.course_name.length < 5 || courseData.course_name.length > 25)
       throw new UnprocessableDataException('Nome do curso inválido');
 
     if (
