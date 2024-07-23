@@ -8,3 +8,7 @@ export const FindTopScoresResponseSchema = z.object({
 });
 
 export class FindTopScoresResponseDTO extends createZodDto(FindTopScoresResponseSchema) {}
+
+export const MultipleTopScoresResponseSchema = z.array(FindTopScoresResponseSchema);
+
+export class MultipleTopScoresResponseDTO extends createZodDto(MultipleTopScoresResponseSchema) {}

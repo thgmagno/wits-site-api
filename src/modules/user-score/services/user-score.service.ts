@@ -3,7 +3,6 @@ import { UserScoreRepository } from '../repository/user-score-repository';
 import { UnprocessableDataException } from '../../../shared/domain/errors/UnprocessableData.exception';
 import { UserNotFoundException } from '../../user/domain/errors/UserNotFound.exception';
 import { FindTopScoresResponseDTO } from '../../user/domain/requests/FindTopScores.request.dto';
-import { UserService } from '../../user/services/user.service';
 import { UserRepository } from '../../user/repository/user.repository';
 
 @Injectable()

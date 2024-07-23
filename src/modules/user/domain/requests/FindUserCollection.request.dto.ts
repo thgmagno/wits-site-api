@@ -7,3 +7,7 @@ export const FindUserCollectionResponseSchema = z.object({
 });
 
 export class FindUserCollectionResponseDTO extends createZodDto(FindUserCollectionResponseSchema) {}
+
+export const MultipleUserCollectionResponseSchema = z.array(FindUserCollectionResponseSchema);
+
+export class MultipleUserCollectionResponseDTO extends createZodDto(MultipleUserCollectionResponseSchema) {}

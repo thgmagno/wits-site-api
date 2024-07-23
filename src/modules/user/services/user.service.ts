@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repository/user.repository';
-import { In } from 'typeorm';
 import {
   CreateUserRequestDTO,
   CreateUserResponseDTO,
