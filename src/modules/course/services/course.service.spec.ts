@@ -139,7 +139,100 @@ describe('CourseService', () => {
       course_name: 'Course with valid name',
       points_worth: 100
     });
-    
+
+    expect(course).toHaveProperty('id_course');
+    expect(course).toHaveProperty('course_name');
+    expect(course).toHaveProperty('points_worth');
+    expect(course).toHaveProperty('created_at');
+  })
+
+  it('should not edit a course passing an invalid course id', async ()  =>  {
+    expect(async () => {
+      await courseService.editCourse(0, {
+        course_name: 'Course with valid name',
+        points_worth: 100
+      });
+    }).rejects.toThrow(CourseNotFoundException)
+  })
+
+  it('should not edit a course passing a name that contains special characters', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with special characters @#$%',
+        points_worth: 100
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing a name that contains numbers', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with numbers 123',
+        points_worth: 100
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing a name that contains less than 5 characters', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: '1234',
+        points_worth: 100
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing a name that contains more than 25 characters', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with more than 25 characters',
+        points_worth: 100
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing a negative amount of points worth', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with negative points worth',
+        points_worth: -100
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing a zero amount of points worth', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with zero points worth',
+        points_worth: 0
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing a decimal amount of points worth', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with decimal points worth',
+        points_worth: 0.5
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not edit a course passing an amount of points worth with more than 5 digits', async () =>  {
+    expect(async () => {
+      await courseService.editCourse(1, {
+        course_name: 'Course with more than 5 digits points worth',
+        points_worth: 100000
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should edit a course passing a valid course name and points worth', async () => {
+    const course = await courseService.editCourse(1, {
+      course_name: 'Course with valid name',
+      points_worth: 100
+    });
+
     expect(course).toHaveProperty('id_course');
     expect(course).toHaveProperty('course_name');
     expect(course).toHaveProperty('points_worth');
