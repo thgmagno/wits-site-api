@@ -107,10 +107,11 @@ export class CourseService {
 
     if (
       !Number.isInteger(courseData.points_worth) ||
-      courseData.points_worth <= 0
+      courseData.points_worth <= 0 || 
+      courseData.points_worth.toString().length > 5
     )
       throw new UnprocessableDataException(
-        'Total de pontos deve ser um número inteiro positivo maior que 0.',
+        'Total de pontos deve ser um número inteiro positivo maior que 0 e não pode conter mais de 5 casas numéricas.',
       );
 
     const course = await this.courseRepository.save({

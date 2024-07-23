@@ -97,4 +97,52 @@ describe('CourseService', () => {
       });
     }).rejects.toThrow(UnprocessableDataException)
   })
+
+  it('should not create a course passing a negative amount of points worth', async () =>  {
+    expect(async () => {
+      await courseService.createCourse({
+        course_name: 'Course with negative points worth',
+        points_worth: -100
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not create a course passing a zero amount of points worth', async () =>  {
+    expect(async () => {
+      await courseService.createCourse({
+        course_name: 'Course with zero points worth',
+        points_worth: 0
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not create a course passing a decimal amount of points worth', async () =>  {
+    expect(async () => {
+      await courseService.createCourse({
+        course_name: 'Course with decimal points worth',
+        points_worth: 0.5
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should not create a course passing an amount of points worth with more than 5 digits', async  ()  =>  {
+    expect(async () => {
+      await courseService.createCourse({
+        course_name: 'Course with more than 5 digits points worth',
+        points_worth: 100000
+      });
+    }).rejects.toThrow(UnprocessableDataException)
+  })
+
+  it('should create a course passing a valid course name and points worth', async () => {
+    const course = await courseService.createCourse({
+      course_name: 'Course with valid name',
+      points_worth: 100
+    });
+    
+    expect(course).toHaveProperty('id_course');
+    expect(course).toHaveProperty('course_name');
+    expect(course).toHaveProperty('points_worth');
+    expect(course).toHaveProperty('created_at');
+  })
 });
