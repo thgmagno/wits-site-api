@@ -15,6 +15,7 @@ import { UserRepository } from '../repository/user.repository';
 import { EmailAlreadyRegisteredException } from '../domain/errors/EmailAlreadyRegistered.exception';
 import { UsernameAlreadyRegisteredException } from '../domain/errors/UsernameAlreadyRegistered.exception';
 import { InvalidCredentialsException } from '../domain/errors/InvalidCredentials.exception';
+import { UserNotFoundException } from '../domain/errors/UserNotFound.exception';
 
 describe('UserService Test Suites', () => {
   let userService: UserService;
@@ -310,5 +311,15 @@ describe('UserService Test Suites', () => {
     })
   })
 
-  
+  it('should throw an error when trying to use home data with an unexiting user id', async()  =>  {
+    expect(async()  =>  {
+      await userService.homeData(0)
+    }).rejects.toThrow(UserNotFoundException)
+  })
+
+  it('should bring the home data of an user given the valid id', async () => {
+    await userService.homeData(2).then(async (response) => {
+      expect(response).toHaveProperty('user');
+    })
+  })
 });
