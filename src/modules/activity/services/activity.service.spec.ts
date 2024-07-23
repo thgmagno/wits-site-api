@@ -13,8 +13,9 @@ import { UserActivityAnsweredRepository } from '../../user-activities-answered/r
 import { JWTProvider } from '../../user/providers/jwt.provider';
 import { CourseNotFoundException } from '../../course/domain/errors/CourseNotFound.exception';
 import { UnprocessableDataException } from '../../../shared/domain/errors/UnprocessableData.exception';
+import { ActivityNotFoundException } from '../domain/errors/ActivityNotFound.exception';
 
-describe('ActivityService', () => {
+describe('Activity Service Tests Suite', () => {
   let activityService: ActivityService;
 
   beforeEach(async () => {
@@ -114,5 +115,81 @@ describe('ActivityService', () => {
       correct_answer: '1',
     });
     expect(activity).toBeDefined();
+  });
+
+  it('should not edit an activity if the activity does not exist', async () => {
+    expect(async () => {
+      await activityService.editActivity(0, {
+        question: 'Test',
+        option_1: 'Test',
+        option_2: 'Test',
+        option_3: 'Test',
+        option_4: 'Test',
+        correct_answer: '1',
+      });
+    }).rejects.toThrow(ActivityNotFoundException);
+  });
+
+  it('shoud not edit the activity if the correct answer is not a number', async () => {
+    expect(async () => {
+      await activityService.editActivity(1, {
+        question: 'Test',
+        option_1: 'Test',
+        option_2: 'Test',
+        option_3: 'Test',
+        option_4: 'Test',
+        correct_answer: 'Test',
+      });
+    }).rejects.toThrow(UnprocessableDataException);
+  })
+
+  it('should not edit the activity if the correct answer is greater than 4', async () => {
+    expect(async () => {
+      await activityService.editActivity(1, {
+        question: 'Test',
+        option_1: 'Test',
+        option_2: 'Test',
+        option_3: 'Test',
+        option_4: 'Test',
+        correct_answer: '5',
+      });
+    }).rejects.toThrow(UnprocessableDataException);
+  });
+
+  it('should not edit the activity if the correct answer is less than 1', async () => {
+    expect(async () => {
+      await activityService.editActivity(1, {
+        question: 'Test',
+        option_1: 'Test',
+        option_2: 'Test',
+        option_3: 'Test',
+        option_4: 'Test',
+        correct_answer: '0',
+      });
+    }).rejects.toThrow(UnprocessableDataException);
+  });
+
+  it('should edit the activity if the data is valid', async () => {
+    const activity = await activityService.editActivity(1, {
+      question: 'Test',
+      option_1: 'Test',
+      option_2: 'Test',
+      option_3: 'Test',
+      option_4: 'Test',
+      correct_answer: '1',
+    });
+    expect(activity).toBeDefined();
+  });
+
+  it('should not remove an activity if the activity does not exist', async () => {
+    expect(async () => {
+      await activityService.removeActivity(0);
+    }).rejects.toThrow(ActivityNotFoundException);
+  });
+
+  it('should remove an activity if the activity exists', async () => {
+    const response = await activityService.removeActivity(1);
+
+    expect(response).toBeTruthy();
   });
 });

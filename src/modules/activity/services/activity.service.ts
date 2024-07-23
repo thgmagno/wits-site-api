@@ -65,6 +65,17 @@ export class ActivityService {
     id: number,
     activityData: EditActivityRequestDTO,
   ): Promise<EditActivityResponseDTO | ActivityNotFoundException> {
+    if (
+      activityData.correct_answer.length < 1 ||
+      activityData.correct_answer.length > 1 ||
+      isNaN(Number(activityData.correct_answer)) ||
+      Number(activityData.correct_answer) > 4 ||
+      Number(activityData.correct_answer) < 1
+    )
+      throw new UnprocessableDataException(
+        'Insira o número válido da resposta correta (entre 1 e 4).',
+      );
+      
     const activity = await this.activityRepository.findOne({
       where: { id_activity: id },
     });
