@@ -7,10 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from '../user/user.module';
 import { UserScoreRepository } from './repository/user-score-repository';
 import { UserScore } from './entity/user-score.entity';
+import { UserService } from '../user/services/user.service';
 
 @Module({
   imports: [DatabaseModule, UserModule, TypeOrmModule.forFeature([User, UserScore])],
-  providers: [UserScoreService, UserScoreRepository],
+  providers: [UserScoreService, UserScoreRepository, UserService],
   controllers: [UserScoreController],
 })
 export class UserScoreModule {}
