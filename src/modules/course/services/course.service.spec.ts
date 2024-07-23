@@ -238,4 +238,16 @@ describe('CourseService', () => {
     expect(course).toHaveProperty('points_worth');
     expect(course).toHaveProperty('created_at');
   })
+
+  it('should not delete a course passing an invalid course id', async () => {
+    expect(async () => {
+      await courseService.removeCourse(0);
+    }).rejects.toThrow(CourseNotFoundException)
+  })
+
+  it('should delete a course passing a valid course id', async () => {
+    const response = await courseService.removeCourse(1);
+
+    expect(response).toBeTruthy();
+  })
 });
