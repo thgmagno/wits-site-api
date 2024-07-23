@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, Param, Patch, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, HttpException, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import { ActivityService } from '../services/activity.service';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateActivityRequestDTO, CreateActivityResponseDTO } from '../domain/requests/CreateActivity.request.dto';
@@ -78,6 +78,11 @@ export class ActivityController {
       type: AllExceptionsFilterDTO,
     })
     @ApiResponse({
+      status: new NoPermisionException().getStatus(),
+      description: new NoPermisionException().message,
+      type: AllExceptionsFilterDTO,
+    })
+    @ApiResponse({
       status: new ActivityNotFoundException().getStatus(),
       description: new ActivityNotFoundException().message,
       type: AllExceptionsFilterDTO,
@@ -110,6 +115,57 @@ export class ActivityController {
         });
       } else {
         return res.status(201).json(result);
+      }
+    }
+
+    @Delete('remove/:id')
+    @ApiBearerAuth('user-token')
+    @ApiResponse({
+      status: 204,
+      description: 'Atividade removida com sucesso.',
+    })
+    @ApiResponse({
+      status: new NotAuthenticatedException().getStatus(),
+      description: new NotAuthenticatedException().message,
+      type: AllExceptionsFilterDTO,
+    })
+    @ApiResponse({
+      status: new NoPermisionException().getStatus(),
+      description: new NoPermisionException().message,
+      type: AllExceptionsFilterDTO,
+    })
+    @ApiResponse({
+      status: new ActivityNotFoundException().getStatus(),
+      description: new ActivityNotFoundException().message,
+      type: AllExceptionsFilterDTO,
+    })
+    @ApiResponse({
+      status: new CommonException().getStatus(),
+      description: new CommonException().message,
+      type: AllExceptionsFilterDTO,
+    })
+    async removeActivity(
+      @Param('id') id: number,
+      @Req() req: Request,
+      @Res() res: Response,
+    ): Promise<void | AllExceptionsFilterDTO> {
+      const user = req.user;
+
+      if (!user || user.role !== 'admin')
+        return res.status(new NoPermisionException().getStatus()).json({
+          message: new NoPermisionException().message,
+          status: new NoPermisionException().getStatus(),
+        });
+
+      const result = await this.activityService.removeActivity(id);
+
+      if (result instanceof HttpException) {
+        return res.status(result.getStatus()).json({
+          message: result.message,
+          status: result.getStatus(),
+        });
+      } else {
+        return res.status(204).json();
       }
     }
 }

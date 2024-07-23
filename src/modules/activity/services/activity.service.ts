@@ -44,4 +44,14 @@ export class ActivityService {
             ...await this.activityRepository.save(activityData)
         }
     }
+
+    async removeActivity(id: number): Promise<void | ActivityNotFoundException> {
+        const activity = await this.activityRepository.findOne({
+            where: { id_activity: id },
+        });
+
+        if (!activity) throw new ActivityNotFoundException();
+
+        await this.activityRepository.softDelete(id);
+    }
 }

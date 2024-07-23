@@ -22,6 +22,16 @@ export class ActivityModule implements NestModule {
         path: 'activity/create',
         method: RequestMethod.POST,
       },
+
+      {
+        path: 'activity/edit/:id',
+        method: RequestMethod.PATCH,
+      },
+
+      {
+        path: 'activity/remove/:id',
+        method: RequestMethod.DELETE,
+      },
     );
   }
 }
