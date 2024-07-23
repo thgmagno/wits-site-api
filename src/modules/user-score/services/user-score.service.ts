@@ -4,12 +4,13 @@ import { UnprocessableDataException } from '../../../shared/domain/errors/Unproc
 import { UserNotFoundException } from '../../user/domain/errors/UserNotFound.exception';
 import { FindTopScoresResponseDTO } from '../../user/domain/requests/FindTopScores.request.dto';
 import { UserService } from '../../user/services/user.service';
+import { UserRepository } from '../../user/repository/user.repository';
 
 @Injectable()
 export class UserScoreService {
   constructor(
     private readonly userScoreRepository: UserScoreRepository,
-    private readonly userService: UserService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async bringTopScores(): Promise<FindTopScoresResponseDTO[] | []> {
@@ -20,7 +21,7 @@ export class UserScoreService {
 
     const ids = top50Scores.map((score) => score.user_id);
 
-    const users = await this.userService.bringUsersCollection(ids)
+    const users = await this.userRepository.bringUsersCollection(ids)
 
     return top50Scores.map((score, index) => {
       return {

@@ -22,8 +22,6 @@ import { CommonException } from '../../../shared/domain/errors/Common.exception'
 import { UsernameAlreadyRegisteredException } from '../domain/errors/UsernameAlreadyRegistered.exception';
 import { UserScoreRepository } from '../../user-score/repository/user-score-repository';
 import { HomeDataResponseDTO } from '../domain/requests/HomeData.request.dto';
-import { UserScoreService } from '../../user-score/services/user-score.service';
-import { FindTopScoresResponseDTO } from '../domain/requests/FindTopScores.request.dto';
 import { FindUserCollectionResponseDTO } from '../domain/requests/FindUserCollection.request.dto';
 
 @Injectable()
@@ -31,7 +29,6 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userScoreRepository: UserScoreRepository,
-    private readonly userScoreService: UserScoreService,
     private jwtProvider: JWTProvider,
     private hashProvider: HashProvider,
   ) {}
@@ -163,17 +160,6 @@ export class UserService {
         role: user.role,
       },
     };
-  }
-
-  async bringUsersCollection(user_ids: number[]): Promise<FindUserCollectionResponseDTO[] | []> {
-    const users = await this.userRepository.find({
-      where: { id_user: In(user_ids) },
-    })
-
-    return users.map(user => ({
-      id: user.id_user,
-      username: user.username,
-    }));
   }
 }
 
